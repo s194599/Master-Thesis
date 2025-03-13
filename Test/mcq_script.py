@@ -20,7 +20,7 @@ def generate_quiz_from_text(text):
     return response['response']
 
 # Example PDF path
-pdf_path = "C:/Users/jonas/Downloads/Slides-03.pdf"
+pdf_path = "Files/romantikken.pdf"
 
 # Extract text from the PDF
 extracted_text = extract_text_from_pdf(pdf_path)
