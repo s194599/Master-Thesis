@@ -20,19 +20,19 @@ def generate_quiz(pdf_text, num_questions = 5, model="mistral"):  # Change model
 
     # Dynamically generate the format for the specified number of questions
     quiz_format = ""
-    for i in range(1, num_questions + 1):
-        quiz_format += f"""
-    {i}. [Spørgsmål {i}]  
+    
+    quiz_format += f"""
+    n) [Spørgsmål n]  
         A) [Mulighed 1]  
         B) [Mulighed 2]  
         C) [Mulighed 3]  
         D) [Mulighed 4]  
-    Korrekt svar: [Korrekt bogstav]  
+    Korrekt svar: [Korrekt mulighed bogstav]
     """
 
     prompt = f"""
-    Du er en quiz-generator. Baseret på følgende danske tekst skal du lave en **{num_questions}-spørgsmåls multiple-choice quiz**.  
-    Brug **kun** det præcise format herunder.  
+    Du er en quiz-generator. Baseret på følgende danske tekst skal du lave en **multiple-choice quiz**.  
+    Brug formatet herunder.  
 
     **Tekst:**  
     {pdf_text}  
@@ -40,7 +40,7 @@ def generate_quiz(pdf_text, num_questions = 5, model="mistral"):  # Change model
     **Format:**  
     {quiz_format}
 
-    Svar **kun** med quizzen. Giv **ingen** forklaringer, opsummeringer eller ekstra tekst. Skriv quizzen på dansk.
+    Svar **kun** med quizzen. Giv **ingen** forklaringer, opsummeringer eller ekstra tekst. Giv præcis {num_questions} spørgsmål. Skriv quizzen på dansk.
     """
 
     payload = {"model": model, "prompt": prompt, "stream": False}
@@ -55,9 +55,10 @@ def generate_quiz(pdf_text, num_questions = 5, model="mistral"):  # Change model
 
 # Main function
 def main():
+    num_questions = 1
     pdf_files = [
         "Files/romantikken.pdf", 
-        "Files/romantikken-og-hca.pdf",
+        "Files/kompendium-om-1800-tallet.pdf",
     ]
 
     print("Extracting text from PDF...")
@@ -68,12 +69,12 @@ def main():
         print(f"Processing: {pdf}")
         all_text += extract_text_from_pdf(pdf) + "\n\n"
 
-    if len(all_text) > 16000:  # 🔹 Limit text length for token constraints
-        print("Warning: Combined PDF text is too long. Using only the first 16,000 characters.")
-        all_text = all_text[:16000]
+    if len(all_text) > 128000:  # 🔹 Limit text length for token constraints
+        print("Warning: Combined PDF text is too long. Using only the first 128,000 characters.")
+        all_text = all_text[:128000]
 
     print("\nGenerating quiz...\n")
-    quiz = generate_quiz(all_text, 2, "mistral")
+    quiz = generate_quiz(all_text, num_questions, "mistral")
     
     print(quiz)
 
